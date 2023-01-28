@@ -50,7 +50,7 @@ jobs:
 
       - name: Deploy Docker image
         run: |-
-          gcloud run deploy ${{ env.SERVICE }} \ 
+          gcloud run deploy ${{ env.SERVICE }} \
             --region ${{ env.REGION }} \
             --image europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:${{ github.sha }} \
             --allow-unauthenticated
