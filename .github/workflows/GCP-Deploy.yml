@@ -36,12 +36,6 @@ jobs:
       - name: Authorize Docker push
         run: gcloud auth configure-docker
 
-      - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
-
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
       - name: Build Code
         run: ./gradlew clean build
 
@@ -49,14 +43,14 @@ jobs:
         run: ./gradlew dockerBuild
 
       - name: Tag Docker image
-        run: docker tag slackbot:latest europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{  github.sha }}
+        run: docker tag slackbot:latest europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{ github.sha }}
 
       - name: Push Docker image
-        run: docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{  github.sha }}
+        run: docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{ github.sha }}
 
       - name: Deploy Docker image
         run: |-
           gcloud run deploy ${{ env.SERVICE }} \ 
             --region ${{ env.REGION }} \
-            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:0.1 \
+            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}::${{ github.sha }} \
             --allow-unauthenticated
