@@ -34,7 +34,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Authorize Docker push
-        run: gcloud auth configure-docker
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
       - name: Build Code
         run: ./gradlew clean build
@@ -43,14 +43,14 @@ jobs:
         run: ./gradlew dockerBuild
 
       - name: Tag Docker image
-        run: docker tag slackbot:latest europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{ github.sha }}
+        run: docker tag slackbot:latest europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:${{ github.sha }}
 
       - name: Push Docker image
-        run: docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{ github.sha }}
+        run: docker push europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:${{ github.sha }}
 
       - name: Deploy Docker image
         run: |-
           gcloud run deploy ${{ env.SERVICE }} \ 
             --region ${{ env.REGION }} \
-            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}::${{ github.sha }} \
+            --image europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:${{ github.sha }} \
             --allow-unauthenticated
