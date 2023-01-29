@@ -7,7 +7,7 @@ plugins {
 }
 
 version = "0.1"
-group = "example.micronaut"
+group = "se.ltrldev"
 
 repositories {
     mavenCentral()
@@ -28,10 +28,10 @@ dependencies {
 
 }
 
-
 application {
-    mainClass.set("example.micronaut.ApplicationKt")
+    mainClass.set("se.ltrldev.slackbot.ApplicationKt")
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("11")
 }
@@ -48,15 +48,18 @@ tasks {
         }
     }
 }
+
+tasks.named("dockerBuild") {
+    images.add("europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:$project.version")
+}
+
 graalvmNative.toolchainDetection = false
+
 micronaut {
     runtime("netty")
     testRuntime("junit5")
     processing {
         incremental(true)
-        annotations("example.micronaut.*")
+        annotations("se.ltrldev.*")
     }
 }
-
-
-

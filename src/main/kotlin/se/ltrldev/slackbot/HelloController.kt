@@ -1,8 +1,7 @@
-package example.micronaut
+package se.ltrldev.slackbot
 
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.*
-import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 @Controller("/hello")
