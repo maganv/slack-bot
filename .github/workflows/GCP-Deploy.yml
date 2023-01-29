@@ -49,7 +49,7 @@ jobs:
         run: ./gradlew dockerBuild
 
       - name: Push Docker image
-        run: docker push $IMAGE_NAME
+        run: docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{ github.sha }}
 
       - name: Deploy Docker image
         run: |-
