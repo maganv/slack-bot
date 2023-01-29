@@ -6,21 +6,32 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  SERVICE: slack-bot
+  REGION: europe-west1
+
 jobs:
   build_deploy:
     name: Build And Deploy
     runs-on: ubuntu-latest
-    env:
 
-      IMAGE_NAME: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:0.1
+    permissions:
+      contents: 'read'
+      id-token: 'write'
 
     steps:
-      - name: Login
-        uses: google-github-actions/setup-gcloud@v1
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v1'
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_email: ${{ secrets.GCP_EMAIL }}
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Authorize Docker push
+        run: gcloud auth configure-docker
 
       - name: Configure Docker
         run: gcloud auth configure-docker --quiet
@@ -38,4 +49,8 @@ jobs:
         run: docker push $IMAGE_NAME
 
       - name: Deploy Docker image
-        run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --region europe-west1 --allow-unauthenticated
+        run: |-
+          gcloud run deploy ${{ env.SERVICE }} \ 
+            --region ${{ env.REGION }} \
+            --image europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{ github.sha }} \
+            --allow-unauthenticated
