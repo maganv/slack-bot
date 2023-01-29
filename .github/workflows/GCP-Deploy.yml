@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
 
-      IMAGE_NAME: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_APP_NAME }}:0.1
+      IMAGE_NAME: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:0.1
 
     steps:
       - name: Login
