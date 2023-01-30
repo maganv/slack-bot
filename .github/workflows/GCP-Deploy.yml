@@ -48,8 +48,11 @@ jobs:
       - name: Build Docker image
         run: ./gradlew dockerBuild
 
+      - name: Tag Docker image
+        run: docker tag slackbot:latest europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{  github.sha }}
+
       - name: Push Docker image
-        run: docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:0.1
+        run: docker push europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/docker-repo/${{ secrets.GCP_APP_NAME }}:${{  github.sha }}
 
       - name: Deploy Docker image
         run: |-

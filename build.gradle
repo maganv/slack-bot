@@ -49,9 +49,9 @@ tasks {
     }
 }
 
-tasks.named("dockerBuild") {
-    images.add("europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:$project.version")
-}
+//tasks.named("dockerBuild") {
+//    images.add("europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:$project.version")
+//}
 
 graalvmNative.toolchainDetection = false
 
