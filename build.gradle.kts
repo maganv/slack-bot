@@ -9,6 +9,7 @@ plugins {
 version = "0.1"
 group = "se.ltrldev"
 
+val kotlinVersion=project.properties.get("kotlinVersion")
 repositories {
     mavenCentral()
 }
@@ -21,9 +22,10 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-    runtimeOnly("ch.qos.logback:logback-classic")
     implementation("io.micronaut:micronaut-validation")
+    implementation("com.slack.api:bolt-micronaut:1.27.3")
 
+    runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 }
@@ -33,33 +35,38 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.toVersion("11")
+    sourceCompatibility = JavaVersion.toVersion("17")
 }
 
 tasks {
     compileKotlin {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
     compileTestKotlin {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 }
 
-//tasks.named("dockerBuild") {
-//    images.add("europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:$project.version")
-//}
-
-graalvmNative.toolchainDetection = false
+tasks {
+    test {
+        useJUnitPlatform()
+        this.testLogging {
+            events(org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED)
+            exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        }
+    }
+}
+graalvmNative.toolchainDetection.set(false)
 
 micronaut {
     runtime("netty")
     testRuntime("junit5")
     processing {
         incremental(true)
-        annotations("se.ltrldev.*")
+        annotations("se.ltrldev.slackbot.*")
     }
 }

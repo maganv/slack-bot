@@ -10,6 +10,8 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   SERVICE: slack-bot
   REGION: europe-west1
+  REGISTRY: europe-west1-docker.pkg.dev
+  DOCKER_REPO: docker-repo
 
 jobs:
   build_deploy:
@@ -24,17 +26,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@v1'
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
         with:
-          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Authorize Docker push
-        run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+        run: gcloud auth configure-docker ${{ env.REGISTRY }}
 
       - uses: actions/setup-java@v2
         with:
@@ -49,14 +51,16 @@ jobs:
         run: ./gradlew dockerBuild
 
       - name: Tag Docker image
-        run: docker tag slackbot:latest europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:${{ github.sha }}
+        run: docker tag slackbot:latest ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{env.DOCKER_REPO }/${{ env.SERVICE }}:${{ github.sha }}
 
       - name: Push Docker image
-        run: docker push europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:${{ github.sha }}
+        run: docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/${{ env.SERVICE }}:${{ github.sha }}
 
       - name: Deploy Docker image
         run: |-
           gcloud run deploy ${{ env.SERVICE }} \
             --region ${{ env.REGION }} \
-            --image europe-west1-docker.pkg.dev/ltrldev-slackbot1-dev/docker-repo/slack-bot:${{ github.sha }} \
-            --allow-unauthenticated
+            --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/${{ env.SERVICE }}:${{ github.sha }} \
+            --allow-unauthenticated \
+          SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }},\
+          SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}

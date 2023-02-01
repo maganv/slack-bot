@@ -1,6 +1,8 @@
 micronaut:
   application:
-    name: micronautguide
+    name: slack-bot
+  server:
+    port: 3000
 netty:
   default:
     allocator:
