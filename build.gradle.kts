@@ -60,7 +60,12 @@ tasks {
         }
     }
 }
+
 graalvmNative.toolchainDetection.set(false)
+
+tasks.named<io.micronaut.gradle.docker.MicronautDockerfile>("dockerfile") {
+    exportPorts(3000)
+}
 
 micronaut {
     runtime("netty")
