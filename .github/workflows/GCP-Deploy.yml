@@ -51,7 +51,7 @@ jobs:
         run: ./gradlew dockerBuild
 
       - name: Tag Docker image
-        run: docker tag slackbot:latest ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{env.DOCKER_REPO }/${{ env.SERVICE }}:${{ github.sha }}
+        run: docker tag slackbot:latest ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/${{ env.SERVICE }}:${{ github.sha }}
 
       - name: Push Docker image
         run: docker push ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/${{ env.SERVICE }}:${{ github.sha }}
