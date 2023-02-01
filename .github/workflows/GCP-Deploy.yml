@@ -62,6 +62,4 @@ jobs:
             --region ${{ env.REGION }} \
             --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/${{ env.SERVICE }}:${{ github.sha }} \
             --allow-unauthenticated \
-            --set-env-vars \
-            SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }},\
-            SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}
+            --set-env-vars SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }}, SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}
