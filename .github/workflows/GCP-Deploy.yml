@@ -60,7 +60,7 @@ jobs:
       - name: Deploy Docker image
         run: |-
           gcloud run deploy ${{ env.SERVICE }} \
-            --port ${{ vars.PORT }}
+            --port ${{ vars.PORT }} \
             --region ${{ env.REGION }} \
             --image ${{ env.REGISTRY }}/${{ env.PROJECT_ID }}/${{ env.DOCKER_REPO }}/${{ env.SERVICE }}:${{ github.sha }} \
             --allow-unauthenticated \
